@@ -3,5 +3,5 @@ class Account {
 
     int id;
     String name;
-    int amount;
+    double amount;
 }
