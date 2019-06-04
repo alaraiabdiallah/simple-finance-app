@@ -23,12 +23,21 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Colors.white,
         title: Text(widget.title, style: TextStyle(color: Colors.black)),
         leading: _appBarLeading(),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.notifications_none),
+            color: Colors.black,
+            onPressed: (){
+              print("Bell Tapped");
+            },
+          )
+        ],
       ),
       body: Container(
         child: ListView(
           children: <Widget>[
-            BalanceContainer(balance: 1300000),
             AccountList(accounts:accounts),
+            BalanceContainer(balance: 1300000),
             LastTransaction()
           ],
         ),
@@ -48,6 +57,160 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
 }
+class BalanceContainer extends StatelessWidget {
+  BalanceContainer({Key key, this.balance}) : super(key: key);
+
+  final double balance;
+
+  BoxConstraints constraints = BoxConstraints(
+    minHeight: 75,
+    maxHeight: 125
+  );
+
+  BoxDecoration boxDecor = BoxDecoration(
+    color: Colors.white,
+    borderRadius: BorderRadius.all(Radius.circular(10)),
+    boxShadow: [
+      new BoxShadow(
+        color: Colors.grey,
+        blurRadius: 1,
+        offset: new Offset(0, 2)
+      ),
+      new BoxShadow(
+        color: Colors.grey,
+        blurRadius: 2,
+        offset: new Offset(0, 1)
+      ),
+    ]
+  );
+    
+  Column content(){
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: <Widget>[
+        Text(moneyFormat(balance), style: TextStyle(fontSize: 26, fontWeight: FontWeight.w500)),
+        Padding(
+          padding: EdgeInsets.only(
+            top: 10
+          ),
+          child: Text("Total Balance", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
+        ),
+      ],
+    );
+  } 
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: EdgeInsets.all(10),
+      constraints: constraints,
+      decoration: boxDecor,
+      child: content(),
+    );
+  }
+}
+
+class AccountList extends StatelessWidget {
+
+  AccountList({List<Account> accounts});
+  
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(2, 10, 2, 10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.fromLTRB(5,20,5,20),
+            child: Text("List of Account", style: TextStyle(fontSize: 21, fontWeight: FontWeight.w700, fontFamily: 'Raleway Black')),
+          ),
+          Container(
+            height: 100,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: accounts.length,
+              itemBuilder: (ctx,pos){
+                return _accountItem(accounts[pos]);
+              },
+            )
+          )
+        ],
+      ),
+    );
+  }
+
+  Widget _accountItem(Account account){
+    BoxConstraints constraints = BoxConstraints(
+      maxWidth: 120,
+      maxHeight: 80
+    );
+
+   List<Color> colors;
+
+   if (account.color == "blue") {
+     colors = [
+      Colors.blue[400],
+      Colors.blue[300],
+      Colors.blue[200],
+    ];
+   }else if(account.color == "green"){
+     colors = [
+      Colors.green[400],
+      Colors.green[300],
+      Colors.green[200]
+    ];
+   }else if(account.color == "red"){
+     colors = [
+      Colors.red[400],
+      Colors.red[300],
+      Colors.red[200]
+    ];
+   }else{
+     colors = [
+      Colors.grey[400],
+      Colors.grey[200]
+    ];
+   }
+
+    BoxDecoration cardDecor = BoxDecoration(
+      borderRadius: BorderRadius.all(Radius.circular(10)),
+      gradient: LinearGradient(
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight,
+          colors: colors
+      ),
+    );
+
+
+    return Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10))
+          ),
+        child: new InkWell(
+          onTap: (){
+            print("Tapped");
+          },
+          child: Container(
+            decoration: cardDecor,
+            padding: EdgeInsets.all(15),
+            constraints: constraints,
+            width: 120,
+            height: 80,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: <Widget>[
+                Text(account.name,style: TextStyle(color: Colors.white)),
+                Text(moneyFormat(account.amount), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
+              ],
+            ),
+          ),
+        )
+    );
+  }
+
+}
 
 class LastTransaction extends StatelessWidget {
   @override
@@ -58,8 +221,8 @@ class LastTransaction extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget> [
           Padding(
-            padding: EdgeInsets.all(5),
-            child: Text("Lastest transaction", style: TextStyle(fontSize: 21)),
+            padding: EdgeInsets.fromLTRB(5,20,5,20),
+            child: Text("Lastest transaction", style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, fontFamily: 'Raleway Black')),
           ),
           _listOfTransaction()
         ],
@@ -158,106 +321,4 @@ class LastTransaction extends StatelessWidget {
     );
   }
 
-}
-
-class AccountList extends StatelessWidget {
-
-  AccountList({List<Account> accounts});
-  
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(2, 10, 2, 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(5),
-            child: Text("List of account", style: TextStyle(fontSize: 21)),
-          ),
-          Container(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: accounts.length,
-              itemBuilder: (ctx,pos){
-                return _accountItem(accounts[pos]);
-              },
-            )
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _accountItem(Account account){
-    BoxConstraints constraints = BoxConstraints(
-      maxWidth: 100,
-      maxHeight: 100
-    );
-
-    return Card(
-        child: new InkWell(
-          onTap: (){
-            print("Tapped");
-          },
-          child: Container(
-            padding: EdgeInsets.fromLTRB(5,10,5,10),
-            constraints: constraints,
-            width: 100,
-            height: 100,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Text(account.name),
-                Text(moneyFormat(account.amount)),
-              ],
-            ),
-          ),
-        )
-    );
-  }
-
-}
-
-class BalanceContainer extends StatelessWidget {
-  BalanceContainer({Key key, this.balance}) : super(key: key);
-
-  final double balance;
-
-  BoxConstraints constraints = BoxConstraints(
-    minHeight: 150,
-    maxHeight: 200
-  );
-
-  BoxDecoration boxDecor = BoxDecoration(
-    color: Colors.lightBlue,
-    boxShadow: [
-      new BoxShadow(
-        color: Colors.grey,
-        blurRadius: 5,
-        offset: new Offset(0, 1)
-      ),
-    ]
-  );
-    
-  Column content(){
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text("Current Balance", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w400)),
-        Text(moneyFormat(balance), style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold)),
-      ],
-    );
-  } 
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      constraints: constraints,
-      decoration: boxDecor,
-      child: content(),
-    );
-  }
 }
