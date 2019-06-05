@@ -72,12 +72,12 @@ class BalanceContainer extends StatelessWidget {
     borderRadius: BorderRadius.all(Radius.circular(10)),
     boxShadow: [
       new BoxShadow(
-        color: Colors.grey,
+        color: Colors.grey[400],
         blurRadius: 1,
         offset: new Offset(0, 2)
       ),
       new BoxShadow(
-        color: Colors.grey,
+        color: Colors.grey[400],
         blurRadius: 2,
         offset: new Offset(0, 1)
       ),
@@ -88,7 +88,7 @@ class BalanceContainer extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: <Widget>[
-        Text(moneyFormat(balance), style: TextStyle(fontSize: 26, fontWeight: FontWeight.w500)),
+        Text(moneyFormat(balance), style: TextStyle(fontSize: 26, fontWeight: FontWeight.w500,color: Colors.green)),
         Padding(
           padding: EdgeInsets.only(
             top: 10
@@ -180,6 +180,13 @@ class AccountList extends StatelessWidget {
           end: Alignment.topRight,
           colors: colors
       ),
+      boxShadow: [
+        new BoxShadow(
+          color: Colors.grey[400],
+          blurRadius: 2,
+          offset: new Offset(0, 2)
+        )
+      ]
     );
 
 
@@ -253,7 +260,7 @@ class LastTransaction extends StatelessWidget {
             height: 100,
             child: Row(
               children: <Widget>[
-                Expanded(flex: 1,child: trxType(trx)),
+                trxType(trx),
                 Expanded(
                   flex: 2,
                   child: trxText(trx),
@@ -282,28 +289,36 @@ class LastTransaction extends StatelessWidget {
   }
 
   Widget trxType(Transaction trx){
-    Color color;
+    List<Color> colors;
     IconData icon;
     if(trx.type == "Income"){
-      color = Colors.green;
+      colors = [
+        Colors.green[400],
+        Colors.green[300],
+        Colors.green[200]
+      ];
       icon  = Icons.attach_money;
     }else{
-      color = Colors.redAccent;
+      colors = [
+        Colors.red[400],
+        Colors.red[300],
+        Colors.red[200]
+      ];
       icon  = Icons.compare_arrows;
     }
     return Container(
-      margin: EdgeInsets.only(
-        right: 10
-      ),
+      margin: EdgeInsets.all(7),
       decoration: new BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(3),
-          bottomLeft: Radius.circular(3)
-        )
+        gradient: LinearGradient(
+          begin: Alignment.bottomLeft,
+          end: Alignment.topRight,
+          colors: colors
+        ),
+        borderRadius: BorderRadius.all(Radius.circular(5))
       ),
+      width: 100,
       height: double.infinity,
-      child: Icon(icon,size: 40),
+      child: Icon(icon,size: 40,color: Colors.white,),
     );
   }
 
@@ -314,7 +329,8 @@ class LastTransaction extends StatelessWidget {
       children: <Widget>[
         Text(trx.name, style: TextStyle(
           fontSize: 18,
-          fontWeight: FontWeight.bold 
+          fontWeight: FontWeight.bold,
+          fontFamily: "Raleway"
         )),
         Text(trx.accountName),
       ],
