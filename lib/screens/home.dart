@@ -1,12 +1,11 @@
+import 'package:finance/components/AccountList.dart';
 import 'package:finance/components/AppBarCustom.dart';
-import 'package:finance/components/GradientColor.dart';
-import 'package:finance/screens/accountDetail.dart';
+import 'package:finance/components/BalanceContainer.dart';
+import 'package:finance/components/LastTransaction.dart';
 import 'package:flutter/material.dart';
 
 import 'package:finance/data/dummy.dart';
-import 'package:finance/models/account.dart';
 import 'package:finance/models/transaction.dart';
-import 'package:finance/helpers/moneyformat.dart';
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
@@ -18,6 +17,16 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+
+  List<Transaction> _lastTrxs;
+
+  @override
+  void initState(){
+    super.initState();
+    trxs.sort((c,n)=> n.id.compareTo(c.id));
+    _lastTrxs = trxs.take(4).toList();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,255 +35,18 @@ class _MyHomePageState extends State<MyHomePage> {
         child: ListView(
           children: <Widget>[
             AccountList(accounts:accounts),
-            BalanceContainer(balance: 1300000),
-            LastTransaction()
+            BalanceContainer(balance: getTotalAmount()),
+            LastTransaction(transactions: _lastTrxs,)
           ],
         ),
       ),
-    );
-  }
-}
-class BalanceContainer extends StatelessWidget {
-  BalanceContainer({Key key, this.balance}) : super(key: key);
-
-  final double balance;
-
-  BoxConstraints constraints = BoxConstraints(
-    minHeight: 75,
-    maxHeight: 125
-  );
-
-  BoxDecoration boxDecor = BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.all(Radius.circular(10)),
-    boxShadow: [
-      new BoxShadow(
-        color: Colors.grey[400],
-        blurRadius: 1,
-        offset: new Offset(0, 2)
-      ),
-      new BoxShadow(
-        color: Colors.grey[400],
-        blurRadius: 2,
-        offset: new Offset(0, 1)
-      ),
-    ]
-  );
-    
-  Column content(){
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        Text(moneyFormat(balance), style: TextStyle(fontSize: 26, fontWeight: FontWeight.w500,color: Colors.green)),
-        Padding(
-          padding: EdgeInsets.only(
-            top: 10
-          ),
-          child: Text("Total Balance", style: TextStyle(fontSize: 16, fontWeight: FontWeight.w400)),
-        ),
-      ],
-    );
-  } 
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.all(10),
-      constraints: constraints,
-      decoration: boxDecor,
-      child: content(),
-    );
-  }
-}
-
-class AccountList extends StatelessWidget {
-
-  AccountList({List<Account> accounts});
-
-  BuildContext _ctx;
-  
-  @override
-  Widget build(BuildContext context) {
-    _ctx = context;
-    return Container(
-      padding: const EdgeInsets.fromLTRB(2, 10, 2, 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(5,20,5,20),
-            child: Text("List of Account", style: TextStyle(fontSize: 21, fontWeight: FontWeight.w700, fontFamily: 'Raleway Black')),
-          ),
-          Container(
-            height: 100,
-            child: ListView.builder(
-              scrollDirection: Axis.horizontal,
-              itemCount: accounts.length,
-              itemBuilder: (ctx,pos){
-                return _accountItem(accounts[pos]);
-              },
-            )
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _accountItem(Account account){
-    BoxConstraints constraints = BoxConstraints(
-      maxWidth: 120,
-      maxHeight: 80
-    );
-
-    BoxDecoration cardDecor = BoxDecoration(
-      borderRadius: BorderRadius.all(Radius.circular(10)),
-      gradient: definedGradient(account.color),
-      boxShadow: [
-        new BoxShadow(
-          color: Colors.grey[400],
-          blurRadius: 2,
-          offset: new Offset(0, 2)
-        )
-      ]
-    );
-
-
-    return Card(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(10))
-          ),
-        child: new InkWell(
-          onTap: (){
-            Navigator.push(
-              _ctx,
-              MaterialPageRoute(builder: (_ctx) => AccountDetail(account: account,)),
-            );
-          },
-          child: Container(
-            decoration: cardDecor,
-            padding: EdgeInsets.all(15),
-            constraints: constraints,
-            width: 120,
-            height: 80,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Text(account.name,style: TextStyle(color: Colors.white)),
-                Text(moneyFormat(account.amount), style: TextStyle(color: Colors.white,fontWeight: FontWeight.bold),),
-              ],
-            ),
-          ),
-        )
-    );
-  }
-
-}
-
-class LastTransaction extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(2, 10, 2, 10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget> [
-          Padding(
-            padding: EdgeInsets.fromLTRB(5,20,5,20),
-            child: Text("Lastest transaction", style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold, fontFamily: 'Raleway Black')),
-          ),
-          _listOfTransaction()
-        ],
-      ),
-    );
-  }
-
-  Widget _listOfTransaction(){
-    return Container(
-      height: 250,
-      child: ListView.builder(
-        itemCount: trxs.length,
-        itemBuilder: (ctx, pos){
-          return trxItem(trxs[pos]);
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          print("addButton pressed");
         },
+        backgroundColor: Colors.white,
+        child: Icon(Icons.add),
       ),
     );
   }
-
-  Widget trxItem(Transaction trx){
-    return Card(
-        child: new InkWell(
-          onTap: (){
-            print("Tapped");
-          },
-          child: Container(
-            width: double.infinity,
-            height: 100,
-            child: Row(
-              children: <Widget>[
-                trxType(trx),
-                Expanded(
-                  flex: 2,
-                  child: trxText(trx),
-                ),
-                trxDet(trx)
-              ],
-            )
-          ),
-        )
-    );
-  }
-
-  Widget trxDet(Transaction trx){
-    return Padding(
-      padding: EdgeInsets.only(
-        right: 5
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Text("3 days ago"),
-          Text(moneyFormat(trx.amount))
-        ],
-      )
-    );
-  }
-
-  Widget trxType(Transaction trx){
-    String color;
-    IconData icon;
-    if(trx.type == "Income"){
-      color = "green";
-      icon  = Icons.attach_money;
-    }else{
-      color = "red";
-      icon  = Icons.compare_arrows;
-    }
-    return Container(
-      margin: EdgeInsets.all(7),
-      decoration: new BoxDecoration(
-        gradient: definedGradient(color),
-        borderRadius: BorderRadius.all(Radius.circular(5))
-      ),
-      width: 100,
-      height: double.infinity,
-      child: Icon(icon,size: 40,color: Colors.white,),
-    );
-  }
-
-  Widget trxText(Transaction trx){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        Text(trx.name, style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          fontFamily: "Raleway"
-        )),
-        Text(trx.accountName),
-      ],
-    );
-  }
-
 }

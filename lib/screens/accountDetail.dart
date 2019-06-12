@@ -1,5 +1,6 @@
 import 'package:finance/components/AppBarCustom.dart';
 import 'package:finance/components/GradientColor.dart';
+import 'package:finance/components/TrxItem.dart';
 import 'package:finance/data/dummy.dart';
 import 'package:finance/helpers/moneyformat.dart';
 import 'package:finance/models/account.dart';
@@ -15,11 +16,13 @@ class AccountDetail extends StatefulWidget {
   _AccountDetail createState() => _AccountDetail();
 }
 
-class _AccountDetail extends State<AccountDetail> {
+class _AccountDetail extends State<AccountDetail> with TickerProviderStateMixin{
 
-  final String _title = "Account";
+  String _title;
 
   bool _appBarVisible = false;
+
+  List<Transaction> transactions; 
 
   ScrollController _scrollController;
 
@@ -38,9 +41,11 @@ class _AccountDetail extends State<AccountDetail> {
 
   @override
   void initState() {
+    super.initState();
+    _title = widget.account.name;
+    transactions = trxs.where((trx) => trx.accountName == widget.account.name).toList();
     _scrollController = ScrollController();
     _scrollController.addListener(_scrollListener);
-    // super.initState();
   }
 
 
@@ -55,25 +60,18 @@ class _AccountDetail extends State<AccountDetail> {
             Stack(
               children: <Widget>[
                 _head(),
-                Container(
-                  margin: EdgeInsets.only(
-                    top: 150
-                  ),
-                  padding: EdgeInsets.only(
-                    left: 10,
-                    right: 10
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      ..._transactions()
-                    ],
-                  ),      
-                ),
+                _listTrx()
               ],
             )
-            
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: (){
+          print("addButton pressed");
+        },
+        // backgroundColor: Colors.white,
+        child: Icon(Icons.add, color: Colors.black,),
       ),
     );
   }
@@ -83,7 +81,7 @@ class _AccountDetail extends State<AccountDetail> {
       decoration: BoxDecoration(
         gradient: definedGradient(widget.account.color),
       ),
-      constraints: BoxConstraints(maxHeight: 200),
+      constraints: BoxConstraints(maxHeight: 220),
       child: Column(
         children: <Widget>[
           TransparentAppBar(title: _title),
@@ -103,86 +101,23 @@ class _AccountDetail extends State<AccountDetail> {
     );
   }
 
+  Widget _listTrx(){
+    return Container(
+      margin: EdgeInsets.only( top: 170 ),
+      padding: EdgeInsets.only( left: 10, right: 10 ),
+      child: Column(
+        children: <Widget>[ ..._transactions() ],
+      ),
+    );
+  }
+
   List<Widget> _transactions(){
-    return trxs.map((trx){
-      return trxItem(trx);
+    return transactions.map((trx){
+      return TrxItem(trx: trx, onTap: (){
+        print("Tapped "+trx.id.toString());
+      });
     }).toList();
   }
 
-  Widget trxItem(Transaction trx){
-    return Card(
-        child: new InkWell(
-          onTap: (){
-            print("Tapped");
-          },
-          child: Container(
-            width: double.infinity,
-            height: 100,
-            child: Row(
-              children: <Widget>[
-                trxType(trx),
-                Expanded(
-                  flex: 2,
-                  child: trxText(trx),
-                ),
-                trxDet(trx)
-              ],
-            )
-          ),
-        )
-    );
-  }
-
-  Widget trxDet(Transaction trx){
-    return Padding(
-      padding: EdgeInsets.only(
-        right: 5
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: <Widget>[
-          Text("3 days ago"),
-          Text(moneyFormat(trx.amount))
-        ],
-      )
-    );
-  }
-
-  Widget trxType(Transaction trx){
-    String color;
-    IconData icon;
-    if(trx.type == "Income"){
-      color = "green";
-      icon  = Icons.attach_money;
-    }else{
-      color = "red";
-      icon  = Icons.compare_arrows;
-    }
-    return Container(
-      margin: EdgeInsets.all(7),
-      decoration: new BoxDecoration(
-        gradient: definedGradient(color),
-        borderRadius: BorderRadius.all(Radius.circular(5))
-      ),
-      width: 100,
-      height: double.infinity,
-      child: Icon(icon,size: 40,color: Colors.white,),
-    );
-  }
-
-  Widget trxText(Transaction trx){
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: <Widget>[
-        Text(trx.name, style: TextStyle(
-          fontSize: 18,
-          fontWeight: FontWeight.bold,
-          fontFamily: "Raleway"
-        )),
-        Text(trx.accountName),
-      ],
-    );
-  }
 }
 

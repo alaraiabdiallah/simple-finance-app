@@ -48,6 +48,7 @@ class TransparentAppBar extends StatelessWidget{
   Widget build(BuildContext context) {
     
     return Container(
+      padding: EdgeInsets.fromLTRB(0, 10, 0, 10),
       child: Row(
         children: <Widget>[
           _leading(context),
