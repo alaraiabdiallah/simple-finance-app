@@ -10,4 +10,9 @@ List<Account> accounts = [
 List<Transaction> trxs = [
   Transaction(id:1,name:"Salary", type: "Income",amount: 110000, accountName: "BNI"),
   Transaction(id:2,name:"Food", type: "Outcome",amount: 11000, accountName: "Wallet"),
+  Transaction(id:2,name:"Food", type: "Outcome",amount: 11000, accountName: "Wallet"),
+  Transaction(id:2,name:"Food", type: "Outcome",amount: 11000, accountName: "Wallet"),
+  Transaction(id:2,name:"Food", type: "Outcome",amount: 11000, accountName: "Wallet"),
+  Transaction(id:2,name:"Food", type: "Outcome",amount: 11000, accountName: "Wallet"),
+  Transaction(id:2,name:"Food", type: "Outcome",amount: 11000, accountName: "Wallet"),
 ];

@@ -1,3 +1,6 @@
+import 'package:finance/components/AppBarCustom.dart';
+import 'package:finance/components/GradientColor.dart';
+import 'package:finance/screens/accountDetail.dart';
 import 'package:flutter/material.dart';
 
 import 'package:finance/data/dummy.dart';
@@ -18,21 +21,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        title: Text(widget.title, style: TextStyle(color: Colors.black)),
-        leading: _appBarLeading(),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.notifications_none),
-            color: Colors.black,
-            onPressed: (){
-              print("Bell Tapped");
-            },
-          )
-        ],
-      ),
+      appBar: customAppBar(title: widget.title),
       body: Container(
         child: ListView(
           children: <Widget>[
@@ -44,18 +33,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
     );
   }
-
-
-  Widget _appBarLeading(){
-    return IconButton(
-          color: Colors.black,
-          icon: Icon(Icons.menu),
-          onPressed: () {
-            print("menu pressed");
-          },
-    );
-  }
-
 }
 class BalanceContainer extends StatelessWidget {
   BalanceContainer({Key key, this.balance}) : super(key: key);
@@ -113,9 +90,12 @@ class BalanceContainer extends StatelessWidget {
 class AccountList extends StatelessWidget {
 
   AccountList({List<Account> accounts});
+
+  BuildContext _ctx;
   
   @override
   Widget build(BuildContext context) {
+    _ctx = context;
     return Container(
       padding: const EdgeInsets.fromLTRB(2, 10, 2, 10),
       child: Column(
@@ -146,40 +126,9 @@ class AccountList extends StatelessWidget {
       maxHeight: 80
     );
 
-   List<Color> colors;
-
-   if (account.color == "blue") {
-     colors = [
-      Colors.blue[400],
-      Colors.blue[300],
-      Colors.blue[200],
-    ];
-   }else if(account.color == "green"){
-     colors = [
-      Colors.green[400],
-      Colors.green[300],
-      Colors.green[200]
-    ];
-   }else if(account.color == "red"){
-     colors = [
-      Colors.red[400],
-      Colors.red[300],
-      Colors.red[200]
-    ];
-   }else{
-     colors = [
-      Colors.grey[400],
-      Colors.grey[200]
-    ];
-   }
-
     BoxDecoration cardDecor = BoxDecoration(
       borderRadius: BorderRadius.all(Radius.circular(10)),
-      gradient: LinearGradient(
-          begin: Alignment.bottomLeft,
-          end: Alignment.topRight,
-          colors: colors
-      ),
+      gradient: definedGradient(account.color),
       boxShadow: [
         new BoxShadow(
           color: Colors.grey[400],
@@ -196,7 +145,10 @@ class AccountList extends StatelessWidget {
           ),
         child: new InkWell(
           onTap: (){
-            print("Tapped");
+            Navigator.push(
+              _ctx,
+              MaterialPageRoute(builder: (_ctx) => AccountDetail(account: account,)),
+            );
           },
           child: Container(
             decoration: cardDecor,
@@ -289,31 +241,19 @@ class LastTransaction extends StatelessWidget {
   }
 
   Widget trxType(Transaction trx){
-    List<Color> colors;
+    String color;
     IconData icon;
     if(trx.type == "Income"){
-      colors = [
-        Colors.green[400],
-        Colors.green[300],
-        Colors.green[200]
-      ];
+      color = "green";
       icon  = Icons.attach_money;
     }else{
-      colors = [
-        Colors.red[400],
-        Colors.red[300],
-        Colors.red[200]
-      ];
+      color = "red";
       icon  = Icons.compare_arrows;
     }
     return Container(
       margin: EdgeInsets.all(7),
       decoration: new BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomLeft,
-          end: Alignment.topRight,
-          colors: colors
-        ),
+        gradient: definedGradient(color),
         borderRadius: BorderRadius.all(Radius.circular(5))
       ),
       width: 100,
