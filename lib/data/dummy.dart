@@ -7,6 +7,10 @@ List<Transaction> trxs = [
   Transaction(id:3,name:"Withdraw", type: "Income",amount: 50000, accountName: "Wallet"),
   Transaction(id:4,name:"Food", type: "Outcome",amount: 11000, accountName: "Wallet"),
   Transaction(id:5,name:"Food", type: "Outcome",amount: 11000, accountName: "Wallet"),
+  Transaction(id:6,name:"Shopping", type: "Outcome",amount: 100000, accountName: "BNI"),
+  Transaction(id:7,name:"Shopping", type: "Outcome",amount: 100000, accountName: "BNI"),
+  Transaction(id:8,name:"Shopping", type: "Outcome",amount: 100000, accountName: "BNI"),
+  Transaction(id:9,name:"Food", type: "Outcome",amount: 10000, accountName: "BNI"),
 ];
 
 double getAccountAmount(String accountName){

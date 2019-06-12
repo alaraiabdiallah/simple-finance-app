@@ -70,7 +70,7 @@ class _AccountDetail extends State<AccountDetail> with TickerProviderStateMixin{
         onPressed: (){
           print("addButton pressed");
         },
-        // backgroundColor: Colors.white,
+        backgroundColor: Colors.white,
         child: Icon(Icons.add, color: Colors.black,),
       ),
     );

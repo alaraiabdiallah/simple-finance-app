@@ -45,7 +45,7 @@ class _MyHomePageState extends State<MyHomePage> {
           print("addButton pressed");
         },
         backgroundColor: Colors.white,
-        child: Icon(Icons.add),
+        child: Icon(Icons.add,color: Colors.black,),
       ),
     );
   }
